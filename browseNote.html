@@ -1,0 +1,231 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	
+	<!-- Bootstrap Core CSS -->
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	
+	<!-- Custom CSS -->
+	<link href="css/agency.css" rel="stylesheet">
+	
+	<!-- Custom Fonts -->
+	<link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+	<link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
+
+	<title>The Tiny Note</title>
+
+</head>
+
+<body id="page-top" class="index">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top navbar-shrink">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand page-scroll" href="index.html">The Tiny Note</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="addNote.php">Add a Note</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="browseNote.html">Browse Notes</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="sortNote.html">Sort Notes</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+<script>
+
+function getXmlHttpRequestObject() 
+{
+	if (window.XMLHttpRequest)
+		return new XMLHttpRequest();
+	
+	else if (window.ActiveXObject) 
+		return new ActiveXObject("Microsoft.XMLHTTP");
+	
+	else alert ("XMLHttp not supported by browser")
+}
+
+//options for search menu. By recipients etc....
+function showOptions(valueType)
+{
+ 	var ajaxObject = getXmlHttpRequestObject();
+
+	//if the value of the string is nothing. Reset the div.
+	if (valueType=="") 
+	{
+		document.getElementById("displayResults").innerHTML="";
+				
+		//if these options are choosen again. Remove previous result from search. 
+		document.getElementById("displaySearchResults").innerHTML="";
+		return;
+	} 
+	
+    
+	ajaxObject.onreadystatechange=function() 
+	{
+    	if (ajaxObject.readyState==4 && ajaxObject.status==200) 
+    	{
+			document.getElementById("displayResults").innerHTML = ajaxObject.responseText;
+		}
+	}
+	
+	//Getting all ids, senders etc.. for the notes.
+	if(valueType=="id" || valueType=="sender" || valueType=="recipient" || valueType=="status")
+	{
+		//if these options are choosen again. Remove previous result from search. 
+		document.getElementById("displaySearchResults").innerHTML="";
+		
+		ajaxObject.open("GET","getAllResultsBy.php?result="+valueType,true);
+		ajaxObject.send();
+	}
+}
+
+//showing list of results found for choice choosen intially. Eg. List of recipients.
+function showSearchResults(valueType)
+{
+ 	var ajaxObject = getXmlHttpRequestObject();
+ 	
+	//if the value of the string is nothing. Reset the div.
+	if (valueType=="") 
+	{
+		document.getElementById("displaySearchResults").innerHTML="";
+		return;
+	} 
+	    
+	ajaxObject.onreadystatechange=function() 
+	{
+    	if (ajaxObject.readyState==4 && ajaxObject.status==200) 
+    	{
+			document.getElementById("displaySearchResults").innerHTML = ajaxObject.responseText;
+		}
+	}
+	
+	//Getting a particular search result for name or id chosen. 
+	ajaxObject.open("GET","getSearchResultsBy.php?result="+valueType,true);
+	ajaxObject.send();
+	
+}
+
+//delete using NoteID. Removes it from table. 
+function deleteNote(noteID)
+{
+	var ajaxObject = getXmlHttpRequestObject();
+	
+	ajaxObject.open("GET","deleteNote.php?noteID="+noteID,true);
+	ajaxObject.send();
+	
+	ajaxObject.onreadystatechange=function() 
+	{
+    	if (ajaxObject.readyState==4 && ajaxObject.status==200) 
+    	{	
+    		 var select = document.getElementById('searchOptions');
+		     var indexSelected = select.selectedIndex;
+		     var selectValue =  select.value;
+    		 if(confirm("Are you sure you want to delete "+noteID+"?")==true)
+    		 {
+		    	 if(document.getElementById("displayNoteResults").rows.length==2 && selectValue != "new" && selectValue != "current" && selectValue != "historic")
+				 {
+		    		 var div = document.getElementById('displaySearchResults');//Parent Div ID
+					 var elem = document.getElementById('displayNoteResults');
+					 div.removeChild(elem);
+					 select.removeChild(select[indexSelected]);  
+				 }
+				 
+				 else
+				 {
+					 var row = document.getElementById(noteID);
+					 row.parentNode.removeChild(row);
+				 }
+    		 }
+		}
+	}
+}
+
+//editing Status of Note 
+function editStatus(noteID,valueType)
+{
+	if(valueType!="")
+	{
+		if(confirm("Are you sure you want to edit note "+noteID+"?")==true)
+		{
+			var ajaxObject = getXmlHttpRequestObject();
+			
+			ajaxObject.onreadystatechange=function() 
+			{
+				if (ajaxObject.readyState==4 && ajaxObject.status==200) 
+				{
+					var row = document.getElementById('status_'+noteID);
+					row.innerHTML = valueType;
+				}
+			}
+			//editing the status of the note.
+			ajaxObject.open("GET","editStatus.php?noteID="+noteID+"&status="+valueType,true);
+			ajaxObject.send();
+		 }
+	}
+}
+
+//takes you to view the note in full screen format.
+function viewNote(noteID)
+{
+	window.location.href = "viewNote.php?noteID="+noteID;
+}
+
+</script> 
+
+	<section id="addNote">
+
+		<div class="container">
+	
+			<h1>Browse Notes</h1>
+			
+				<br>
+				<select id="optionsChoosen" onchange="showOptions(this.value)">
+					<option value="">Please choose an option</option>
+					<option value="id">By ID</option>
+					<option value="sender">By Sender</option>
+					<option value="recipient">By Recipient</option>
+					<option value="status">By Status</option>
+				</select>
+				
+				<br>
+				<br>
+				<div id="displayResults"></div>
+			 
+				<br>
+				<br>
+				<div id="displaySearchResults"></div>
+			</div>
+	</section>
+</body>
+
+</html>

@@ -1,0 +1,68 @@
+<?xml version="1.0" ?>
+<postItNotes>
+	<nextID>2</nextID>
+	<senderID>1</senderID>
+	<recipientID>3</recipientID>
+<notes>	
+	<note id="2">
+		<title>A tiny Note! Where to being?</title>
+		
+		<sender id="sender_0">
+			<title>Miss</title>
+			<forename>Zara</forename>
+			<surname>McKeown</surname>
+		</sender>
+		
+		<recipients>
+		
+			<recipent id="recipient_2"> 
+				<title>Miss</title>
+				<forename>Olivia</forename>
+				<surname>Wilison</surname>
+			</recipent>
+		
+		</recipients>	
+		
+		<date>29/10/1993</date>
+		
+		<message>Hi there, I really like the drop down search functionality!</message>
+		
+		<url>https://www.thetinynote.com</url>
+		
+		<messageStatus>new</messageStatus>
+	
+	</note>
+	
+	<note id="1">
+		<title>A little note</title>
+		
+		<sender id="sender_0">
+			<title>Miss</title>
+			<forename>Zara</forename>
+			<surname>McKeown</surname>
+		</sender>
+		
+		<recipients>
+		
+			<recipent id="recipient_1"> 
+				<title>Mr</title>
+				<forename>Nick</forename>
+				<surname>Boddula</surname>
+			</recipent>
+		
+		</recipients>	
+		
+		<date>29/10/1993</date>
+		
+		<message>Hello</message>
+		
+		<url>https://www.google.com</url>
+		
+		<messageStatus>new</messageStatus>
+	
+	</note>
+
+</notes>
+
+</postItNotes>
+
